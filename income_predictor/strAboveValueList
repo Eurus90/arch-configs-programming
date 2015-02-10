@@ -1,0 +1,22 @@
+  counts_under = {}
+    counts_over = {}
+    above_list = []
+    for word in list_under:
+        if word in counts_under:
+            counts_under[word] += 1 / len(list_under)
+        else:
+            counts_under[word] = 1 / len(list_under)
+    for word in list_over:
+        if word in counts_over:
+            counts_over[word] += 1 / len(list_over)
+        else:
+            counts_over[word] = 1 / len(list_over)
+    for key_over in counts_over:
+        over = counts_over[key_over]
+        for key_under in counts_under:
+            under = counts_under[key_under]
+            if key_over == key_under:
+                if under < over:
+                    above_list.append(str(key_over))
+
+    return above_list

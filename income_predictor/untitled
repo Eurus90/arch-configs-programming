@@ -1,0 +1,259 @@
+__author__ = 'lorcan'
+
+import string, httplib2
+
+def aboveBelowList(net_file, above_below):
+    list_count = 0
+    total_count = 0
+    above_below_list = []
+    for linestring in net_file:
+        total_count += 1
+        list_total = int(total_count * 0.75)
+        line_list = linestring.split(", ")
+        while list_count < list_total:
+            list_count += 1
+            if line_list[-1] == above_below:
+                above_below_list.append(linestring)
+
+    return above_below_list
+
+
+def attribList(above_below_list, i):
+    undef_list = []
+    for linestring in above_below_list:
+        line_list = linestring.split(", ")
+        for attrib in line_list:
+            if i == 0 or i == 4 or i == 10 or i == 11 or i == 12:
+                if attrib == line_list[i]:
+                    word = int(attrib)
+                    undef_list.append(word)
+            else:
+                if attrib == line_list[i]:
+                    undef_list.append(attrib)
+
+    return undef_list
+
+
+def midPointInt(list_under, list_over):
+    sum_under = 0
+    sum_over = 0
+    list_under_count = 0
+    avg_under = 0
+    avg_over = 0
+
+    for i in list_under:
+        list_under_count += 1
+        sum_under += i
+        avg_under = sum_under // len(list_under)
+    for i in list_over:
+        sum_over += i
+        avg_over = sum_over // len(list_over)
+
+    mid_point = (avg_under + avg_over) // 2
+
+    #print("avg under: ", avg_under)
+    #print("avg over: ", avg_over, "\n\n")
+
+    return mid_point
+
+
+def midPointStr(list_under, list_over):
+    sum_under = 0
+    sum_over = 0
+    avg_under = 0
+    avg_over = 0
+    counts_under = {}
+    counts_over = {}
+
+    for word in list_under:
+        if word in counts_under:
+            counts_under[word] += 1 / len(list_under)
+        else:
+            counts_under[word] = 1 / len(list_under)
+    for i in counts_under:
+        sum_under += counts_under[i]
+        avg_under = sum_under / len(counts_under)
+    for word in list_over:
+        if word in counts_over:
+            counts_over[word] += 1 / len(list_over)
+        else:
+            counts_over[word] = 1 / len(list_over)
+    for i in counts_over:
+        sum_over += counts_over[i]
+        avg_over = sum_over / len(counts_over)
+
+    mid_point = (avg_under + avg_over) / 2
+    #print(mid_point)
+    #print("avg under: ", avg_under)
+    #print("avg over: ", avg_over, "\n\n")
+
+    return mid_point
+
+def discreteValues(list_over):
+    counts_over = {}
+    key_list = []
+    value_list = []
+
+    for word in list_over:
+        if word in counts_over:
+            counts_over[word] += 1 / len(list_over)
+        else:
+            counts_over[word] = 1 / len(list_over)
+    for i in counts_over:
+        key = str(i)
+        key_list.append(key)
+        value = counts_over[i]
+        value_list.append(value)
+        #print(key, ":", value)
+
+    return key_list, value_list
+
+def keyValueList(key_list, key_list1, key_list2, key_list3, key_list4, key_list5, value_list, value_list1, value_list2, value_list3, value_list4, value_list5):
+    key_tot_list = []
+    value_tot_list = []
+    for word in key_list:
+        key_tot_list.append(word)
+    for word in key_list1:
+        key_tot_list.append(word)
+    for word in key_list2:
+        key_tot_list.append(word)
+    for word in key_list3:
+        key_tot_list.append(word)
+    for word in key_list4:
+        key_tot_list.append(word)
+    for word in key_list5:
+        key_tot_list.append(word)
+    for word in value_list:
+        value_tot_list.append(word)
+    for word in value_list1:
+        value_tot_list.append(word)
+    for word in value_list2:
+        value_tot_list.append(word)
+    for word in value_list3:
+        value_tot_list.append(word)
+    for word in value_list4:
+        value_tot_list.append(word)
+    for word in value_list5:
+        value_tot_list.append(word)
+    return key_tot_list, value_tot_list
+
+
+'''def testList(net_file, key_list, value_list):
+    list_count = 0
+    total_count = 0
+    i_count = 0
+    for linestring in net_file:
+        total_count += 1
+        list_total = int(total_count * 0.75)
+        line_list = linestring.split(", ")
+        while list_total < list_count < total_count:
+            for attrib in line_list:
+                for i in key_list:
+                    i_count += 1
+                    if attrib == i:
+                        
+
+def main():
+    data_set_url = "http://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data"
+
+    h = httplib2.Http(".cache")
+    data_set_headers, data_set = h.request(data_set_url)
+
+    data_set = data_set.decode().split("\n")
+
+    above = ">50K"
+    below = "<=50K"
+    above_list = aboveBelowList(data_set, above)
+    below_list = aboveBelowList(data_set, below)
+
+    age_list_over = attribList(above_list, 0)
+    age_list_under = attribList(below_list, 0)
+    age_mid = midPointInt(age_list_under, age_list_over)
+
+    work_list_over = attribList(above_list, 1)
+    work_list_under = attribList(below_list, 1)
+    work_mid = midPointStr(work_list_under, work_list_over)
+    work_key_list, work_value_list = discreteValues(work_list_over)
+    print(work_key_list)
+    print(work_value_list)
+
+    ed_list_over = attribList(above_list, 4)
+    ed_list_under = attribList(below_list, 4)
+    ed_mid = midPointInt(ed_list_under, ed_list_over)
+
+    mart_stat_list_over = attribList(above_list, 5)
+    mart_stat_list_under = attribList(below_list, 5)
+    mart_stat_mid = midPointStr(mart_stat_list_under, mart_stat_list_over)
+    mart_stat_key_list, mart_stat_value_list = discreteValues(mart_stat_list_over)
+    print(mart_stat_key_list)
+    print(mart_stat_value_list)
+
+    occu_list_over = attribList(above_list, 6)
+    occu_list_under = attribList(below_list, 6)
+    occu_mid = midPointStr(occu_list_under, occu_list_over)
+    occu_key_list, occu_value_list = discreteValues(occu_list_over)
+    print(occu_key_list)
+    print(occu_value_list)
+
+    rel_list_over = attribList(above_list, 7)
+    rel_list_under = attribList(below_list, 7)
+    rel_mid = midPointStr(rel_list_under, rel_list_over)
+    rel_key_list, rel_value_list = discreteValues(rel_list_over)
+    print(rel_key_list)
+    print(rel_value_list)
+
+    race_list_over = attribList(above_list, 8)
+    race_list_under = attribList(below_list, 8)
+    race_mid = midPointStr(race_list_under, race_list_over)
+    race_key_list, race_value_list = discreteValues(race_list_over)
+    print(race_key_list)
+    print(race_value_list)
+
+    sex_list_over = attribList(above_list, 9)
+    sex_list_under = attribList(below_list, 9)
+    sex_mid = midPointStr(sex_list_under, sex_list_over)
+    sex_key_list, sex_value_list = discreteValues(sex_list_over)
+    print(sex_key_list)
+    print(sex_value_list)
+
+    cap_g_list_over = attribList(above_list, 10)
+    cap_g_list_under = attribList(below_list, 10)
+    cap_g_mid = midPointInt(cap_g_list_under, cap_g_list_over)
+
+    cap_l_list_over = attribList(above_list, 11)
+    cap_l_list_under = attribList(below_list, 11)
+    cap_l_mid = midPointInt(cap_l_list_under, cap_l_list_over)
+
+    hpw_list_over = attribList(above_list, 12)
+    hpw_list_under = attribList(below_list, 12)
+    hpw_mid = midPointInt(hpw_list_under, hpw_list_over)
+
+    key_list, value_list = keyValueList(work_key_list, mart_stat_key_list, occu_key_list, rel_key_list, race_key_list, sex_key_list, work_value_list, mart_stat_value_list, occu_value_list, rel_value_list, race_value_list, sex_value_list)
+    print(key_list)
+    print(value_list, "\n\n\n\n\n\n\n")
+    print("age:        ", age_mid)
+    print("ed:         ", ed_mid)
+    print("capG:       ", cap_g_mid)
+    print("capL:       ", cap_l_mid)
+    print("hpw:        ", hpw_mid, "\n\n")
+
+    print("work:       ", work_mid)
+    print("mart-stat:  ", mart_stat_mid)
+    print("occu:       ", occu_mid)
+    print("rel:        ", rel_mid)
+    print("race:       ", race_mid)
+    print("sex:        ", sex_mid)
+
+    '''list_count = 0
+    total_count = 0
+    for linestring in net_file:
+        total_count += 1
+        list_total = int(total_count * 0.75)
+        line_list = linestring.split(", ")
+        while list_total < list_count < total_count:
+            for attrib in line_list:
+                if'''
+
+if __name__ == '__main__':
+    main()
+

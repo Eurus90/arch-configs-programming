@@ -1,0 +1,224 @@
+__author__ = 'lorcan'
+
+import httplib2
+
+
+def aboveBelowList(net_file):
+    list_count = 0
+    total_count = 0
+    above_list = []
+    below_list = []
+    test_list = []
+    for linestring in net_file:
+        total_count += 1
+        list_total = int(len(net_file) * 0.75)
+        list_count += 1
+        line_list = linestring.split(", ")
+        if list_count < list_total:
+            if line_list[-1] == ">50K":
+                above_list.append(linestring)
+            if line_list[-1] == "<=50K":
+                below_list.append(linestring)
+        if list_total < total_count:
+            test_list.append(linestring)
+
+    return above_list, below_list, test_list
+
+
+def specialTest(net_file):
+    total_count = 0
+    test_list = []
+    for linestring in net_file[1:]:
+        total_count += 1
+        test_list.append(linestring)
+    print("length of adult.test:   ", total_count)
+
+    return test_list
+
+
+def attribList(above_below_list, i):
+    undef_list = []
+    for linestring in above_below_list:
+        line_list = linestring.split(", ")
+        for attrib in line_list:
+            if i == 0 or i == 4 or i == 10 or i == 11 or i == 12:
+                if attrib == line_list[i]:
+                    word = int(attrib)
+                    undef_list.append(word)
+            else:
+                if attrib == line_list[i]:
+                    undef_list.append(attrib)
+
+    return undef_list
+
+
+def midPointInt(list_under, list_over):
+    sum_under = 0
+    sum_over = 0
+    list_under_count = 0
+    avg_under = 0
+    avg_over = 0
+    for i in list_under:
+        list_under_count += 1
+        sum_under += i
+        avg_under = sum_under // len(list_under)
+    for i in list_over:
+        sum_over += i
+        avg_over = sum_over // len(list_over)
+
+    mid_point = (avg_under + avg_over) // 2
+
+    return mid_point
+
+
+def midPointStr(list_under, list_over):
+    counts_under = {}
+    counts_over = {}
+    above_list = []
+    for word in list_under:
+        if word in counts_under:
+            counts_under[word] += 1 / len(list_under)
+        else:
+            counts_under[word] = 1 / len(list_under)
+    for word in list_over:
+        if word in counts_over:
+            counts_over[word] += 1 / len(list_over)
+        else:
+            counts_over[word] = 1 / len(list_over)
+    for i in counts_over:
+        key = i
+        over = counts_over[i]
+        for x in counts_under:
+            under = counts_under[x]
+            if key == x:
+                if under < over:
+                    above_list.append(i)
+
+    return above_list
+
+
+def test(test_list1, age_mid, ed_mid, cap_g_mid, cap_l_mid, hpw_mid, work_value, mart_stat_value, occu_value, rel_value, race_value,
+         sex_value):
+    total_count = 0
+    right_count = 0
+    above = 0
+    above_prediction = 0
+    for linestring in test_list1:
+        total_count += 1
+        sum = 0
+        new_linelist = []
+        line_list = linestring.split(", ")
+        if len(line_list) == 15:
+            if line_list[-1] == ">50K":
+                above += 1
+                real_value = 1
+            else:
+                real_value = 0
+            for i in range(15):
+                if i == 0 or i == 4 or i == 10 or i == 11 or i == 12:
+                    if int(line_list[i]) >= int(int_list[i]):
+                        new_linelist.append(1)
+                    else:
+                        new_linelist.append(0)
+                if i == 1 or i == 5 or i == 6 or i == 7 or i == 8 or i == 9:
+                    if line_list[i] in str_list[i]:
+                        new_linelist.append(1)
+                    else:
+                        new_linelist.append(0)
+        for i in new_linelist:
+            num = int(i)
+            sum += num
+        if sum >= 6:
+            above_prediction += 1
+            prediction = 1
+        else:
+            prediction = 0
+        if real_value == prediction:
+            right_count += 1
+    percentage = right_count / (total_count / 100)
+
+    return percentage
+
+
+def main():
+    data_set_url = "http://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data"
+    #test_set_url = "http://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.test"
+
+    h = httplib2.Http(".cache")
+    data_set_headers, data_set = h.request(data_set_url)
+    #test_set_headers, test_set = h.request(test_set_url)
+
+    data_set = data_set.decode().split("\n")
+    #test_set = test_set.decode().split("\n")
+
+    above_list, below_list, test_list = aboveBelowList(data_set)
+    #special_test_list = specialTest(test_set)
+
+    age_list_over = attribList(above_list, 0)
+    age_list_under = attribList(below_list, 0)
+    #age_mid = midPointStr(age_list_under, age_list_over)
+    age_mid = midPointInt(age_list_under, age_list_over)
+
+    work_list_over = attribList(above_list, 1)
+    work_list_under = attribList(below_list, 1)
+    work_value = midPointStr(work_list_under, work_list_over)
+
+    ed_list_over = attribList(above_list, 4)
+    ed_list_under = attribList(below_list, 4)
+    #ed_mid = midPointStr(ed_list_under, ed_list_over)
+    ed_mid = midPointInt(ed_list_under, ed_list_over)
+
+    mart_stat_list_over = attribList(above_list, 5)
+    mart_stat_list_under = attribList(below_list, 5)
+    mart_stat_value = midPointStr(mart_stat_list_under, mart_stat_list_over)
+
+    occu_list_over = attribList(above_list, 6)
+    occu_list_under = attribList(below_list, 6)
+    occu_value = midPointStr(occu_list_under, occu_list_over)
+
+    rel_list_over = attribList(above_list, 7)
+    rel_list_under = attribList(below_list, 7)
+    rel_value = midPointStr(rel_list_under, rel_list_over)
+
+    race_list_over = attribList(above_list, 8)
+    race_list_under = attribList(below_list, 8)
+    race_value = midPointStr(race_list_under, race_list_over)
+
+    sex_list_over = attribList(above_list, 9)
+    sex_list_under = attribList(below_list, 9)
+    sex_value = midPointStr(sex_list_under, sex_list_over)
+
+    cap_g_list_over = attribList(above_list, 10)
+    cap_g_list_under = attribList(below_list, 10)
+    #cap_g_mid = midPointStr(cap_g_list_under, cap_g_list_over)
+    cap_g_mid = midPointInt(cap_g_list_under, cap_g_list_over)
+
+    cap_l_list_over = attribList(above_list, 11)
+    cap_l_list_under = attribList(below_list, 11)
+    #cap_l_mid = midPointStr(cap_l_list_under, cap_l_list_over)
+    cap_l_mid = midPointInt(cap_l_list_under, cap_l_list_over)
+
+    hpw_list_over = attribList(above_list, 12)
+    hpw_list_under = attribList(below_list, 12)
+    #hpw_mid = midPointStr(hpw_list_under, hpw_list_over)
+    hpw_mid = midPointInt(hpw_list_under, hpw_list_over)
+
+    #above = test(above_list, age_mid, ed_mid, cap_g_mid, cap_l_mid, hpw_mid, work_value, mart_stat_value, occu_value, rel_value,
+    #             race_value, sex_value)
+
+    #below = test(below_list, age_mid, ed_mid, cap_g_mid, cap_l_mid, hpw_mid, work_value, mart_stat_value, occu_value, rel_value,
+    #             race_value, sex_value)
+
+    accur = test(test_list, age_mid, ed_mid, cap_g_mid, cap_l_mid, hpw_mid, work_value, mart_stat_value, occu_value, rel_value,
+                 race_value, sex_value)
+
+    #special = test(special_test_list, age_mid, ed_mid, cap_g_mid, cap_l_mid, hpw_mid, work_value, mart_stat_value, occu_value, rel_value,
+    #             race_value, sex_value)
+    print("\n!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!\n\n\ntest %:", accur, "\n\n\n!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!\n\n")
+    #print("\n\n\n!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n\nabove %:", above, "\n\n\n!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n\n")
+    #print("\n\n\n!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n\nbelow %:", below, "\n\n\n!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n\n")
+    #print("##************##*************##\n\n\n!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!\n\n\nspecial %:", special, "\n\n\n!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!")
+
+if __name__ == '__main__':
+    main()
+

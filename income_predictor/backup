@@ -1,0 +1,192 @@
+__author__ = 'lorcan'
+
+import httplib2
+
+
+def aboveBelowTestList(net_file):
+    list_count = 0
+    total_count = 0
+    above_list = []
+    below_list = []
+    test_list = []
+    for linestring in net_file:
+        total_count += 1
+        list_total = int(len(net_file) * 0.75)
+        list_count += 1
+        line_list = linestring.split(", ")
+        if list_count < list_total:
+            if line_list[-1] == ">50K":
+                above_list.append(linestring)
+            if line_list[-1] == "<=50K":
+                below_list.append(linestring)
+        if list_total < total_count:
+            test_list.append(linestring)
+
+    return above_list, below_list, test_list
+
+
+def attribList(above_below_list, i):
+    undef_list = []
+    for linestring in above_below_list:
+        line_list = linestring.split(", ")
+        for attrib in line_list:
+            if i == 0 or i == 4 or i == 10 or i == 11 or i == 12:
+                if attrib == line_list[i]:
+                    word = int(attrib)
+                    undef_list.append(word)
+            else:
+                if attrib == line_list[i]:
+                    undef_list.append(attrib)
+
+    return undef_list
+
+
+def midPointInt(list_under, list_over):
+    sum = 0
+    avg_under = 0
+    avg_over = 0
+    for i in list_under:
+        sum += i
+        avg_under = sum // len(list_under)
+    for i in list_over:
+        sum += i
+        avg_over = sum // len(list_over)
+
+    mid_point = (avg_under + avg_over) // 2
+
+    return mid_point
+
+
+def strAboveValueList(list_under, list_over):
+    counts_under = {}
+    counts_over = {}
+    above_list = []
+    for word in list_under:
+        if word in counts_under:
+            counts_under[word] += 1 / len(list_under)
+        else:
+            counts_under[word] = 1 / len(list_under)
+    for word in list_over:
+        if word in counts_over:
+            counts_over[word] += 1 / len(list_over)
+        else:
+            counts_over[word] = 1 / len(list_over)
+    for key_over in counts_over:
+        over = counts_over[key_over]
+        for key_under in counts_under:
+            under = counts_under[key_under]
+            if key_over == key_under:
+                if under < over:
+                    above_list.append(key_over)
+
+    return above_list
+
+
+def testAccuracy(test_list1, int_list, str_list):
+    total_count = 0
+    right_count = 0
+    above_prediction = 0
+    for linestring in test_list1:
+        total_count += 1
+        sum = 0
+        new_linelist = []
+        line_list = linestring.split(", ")
+        if len(line_list) == 15:
+            if line_list[-1] == ">50K":
+                real_value = 1
+            elif line_list[-1] == "<=50K":
+                real_value = 0
+            for i in range(15):
+                if i == 0 or i == 4 or i == 10 or i == 11 or i == 12:
+                    if int(line_list[i]) >= int(int_list[i]):
+                        new_linelist.append(1)
+                    else:
+                        new_linelist.append(0)
+                if i == 1 or i == 5 or i == 6 or i == 7 or i == 8 or i == 9:
+                    if line_list[i] in str_list[i]:
+                        new_linelist.append(1)
+                    else:
+                        new_linelist.append(0)
+            for i in new_linelist:
+                num = int(i)
+                sum += num
+            if sum >= 6:
+                above_prediction += 1
+                prediction = 1
+            else:
+                prediction = 0
+            if prediction == real_value:
+                right_count += 1
+    percentage = right_count / (total_count / 100)
+
+    return percentage
+
+
+def main():
+    data_set_url = "http://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data"
+
+    h = httplib2.Http(".cache")
+    data_set_headers, data_set = h.request(data_set_url)
+
+    data_set = data_set.decode().split("\n")
+
+    above_list, below_list, test_list = aboveBelowTestList(data_set)
+
+    age_list_over = attribList(above_list, 0)
+    age_list_under = attribList(below_list, 0)
+    age_mid = midPointInt(age_list_under, age_list_over)
+
+    workclass_list_over = attribList(above_list, 1)
+    workclass_list_under = attribList(below_list, 1)
+    workclass_above_value_list = strAboveValueList(workclass_list_under, workclass_list_over)
+
+    education_list_over = attribList(above_list, 4)
+    education_list_under = attribList(below_list, 4)
+    education_mid = midPointInt(education_list_under, education_list_over)
+
+    marital_status_list_over = attribList(above_list, 5)
+    marital_status_list_under = attribList(below_list, 5)
+    marital_status_above_value_list = strAboveValueList(marital_status_list_under, marital_status_list_over)
+
+    occupation_list_over = attribList(above_list, 6)
+    occupation_list_under = attribList(below_list, 6)
+    occupation_above_value_list = strAboveValueList(occupation_list_under, occupation_list_over)
+
+    relationship_list_over = attribList(above_list, 7)
+    relationship_list_under = attribList(below_list, 7)
+    relationship_above_value_list = strAboveValueList(relationship_list_under, relationship_list_over)
+
+    race_list_over = attribList(above_list, 8)
+    race_list_under = attribList(below_list, 8)
+    race_above_value_list = strAboveValueList(race_list_under, race_list_over)
+
+    gender_list_over = attribList(above_list, 9)
+    gender_list_under = attribList(below_list, 9)
+    gender_above_value_list = strAboveValueList(gender_list_under, gender_list_over)
+
+    capital_gain_list_over = attribList(above_list, 10)
+    capital_gain_list_under = attribList(below_list, 10)
+    capital_gain_mid = midPointInt(capital_gain_list_under, capital_gain_list_over)
+
+    capital_loss_list_over = attribList(above_list, 11)
+    capital_loss_list_under = attribList(below_list, 11)
+    capital_loss_mid = midPointInt(capital_loss_list_under, capital_loss_list_over)
+
+    hours_per_week_list_over = attribList(above_list, 12)
+    hours_per_week_list_under = attribList(below_list, 12)
+    hours_per_week_mid = midPointInt(hours_per_week_list_under, hours_per_week_list_over)
+
+    int_list = [age_mid, 21, 22, 23, education_mid, 25, 26, 27, 28, 29, capital_gain_mid, capital_loss_mid,
+                hours_per_week_mid]
+    str_list = [20, workclass_above_value_list, 22, 23, 24, marital_status_above_value_list,
+                occupation_above_value_list, relationship_above_value_list, race_above_value_list,
+                gender_above_value_list]
+
+    accuracy = testAccuracy(test_list, int_list, str_list)
+    print("\n!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!\n\n\n         Test Data Accuracy:   %",
+          accuracy, "\n\n\n!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!\n\n")
+
+
+if __name__ == '__main__':
+    main()
+

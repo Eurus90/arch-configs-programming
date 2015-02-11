@@ -1,0 +1,12 @@
+# 
+# /etc/fstab: static file system information
+#
+# <file system>	<dir>	<type>	<options>	<dump>	<pass>
+# /dev/sdc2
+UUID=f125ab63-43f4-449e-b1c8-614dd17ad943	/         	ext4      	rw,relatime,data=ordered	0 1
+
+# /dev/sdc1
+UUID=96e0ff5a-831a-49eb-8338-6b856f454cc3	none      	swap      	defaults  	0 0
+
+# /dev/sdb1
+/dev/sdb1  /media/lorcan/6F5D673342FB610F  ntfs-3g   defaults		  0       0

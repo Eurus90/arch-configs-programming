@@ -1,0 +1,108 @@
+!urxvt*internalBorder: 0
+!urxvt*loginShell: true
+urxvt*colorMode: on
+urxvt*cursorBlink: true
+urxvt*cursorUnderline: false
+urxvt*cursorColor: #0033ff
+urxvt*underlineColor: #8a9bbd
+urxvt*highlightColor: #8a9bbd
+urxvt*highlightTextColor: #050505
+
+urxvt*depth: 32
+!urxvt*background: rgba:0000/0000/0000/dddd
+urxvt*background: [35]#000000
+
+URxvt*tintColor: Cyan
+URxvt.transparent: true
+URxvt.shading: 40
+
+*background: #050505
+*foreground: #c0c0c0
+!Black
+*color0:    #343639
+*color8:    #404040
+! Red
+*color1:    #B28284
+*color9:    #BD8A8C
+! Green
+*color2:    #009900
+*color10:   #009900
+! Yellow
+*color3:    #ff66ff
+*color11:   #ff66ff
+! Blue
+*color4:    #0033ff
+*color12:   #0033ff
+! Magenta
+*color5:    #99FF00
+*color13:   #99FF00
+! Cyan
+*color6:    #00ccff
+*color14:   #00ccff
+! White
+*color7:    #ffffff
+*color15:   #ffffff
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!*background: #050505
+!*foreground: #999999
+!!Black
+!*color0: #0f0f0f
+!*color8: #292929
+!!Red
+!*color1: #2f4d80
+!*color9: #7791e0
+!!Green
+!*color2: #424242
+!*color10: #828a8c
+!!Yellow
+!*color3: #6b8ba3
+!*color11: #8ebdde
+!!Blue
+!*color4: #273a87
+!*color12: #3955c4
+!!Magenta
+!*color5: #74637d
+!*color13: #927d9e
+!!Cyan
+!*color6: #556c85
+!*color14: #6e98b8
+!White
+!*color7: #c0c0c0
+!*color15: #ffffff
+
+urxvt*scrollBar: false
+urxvt*borderless: true
+scrollbar styles: rxvt, plain, next or xterm
+urxvt*scrollstyle: plain
+urxvt*scrollBar_right: true
+urxvt*scrollColor: #777777
+!urxvt*geometry: 104x31
+urxvt*geometry: 103x20
+urxvt*saveLines: 10000
+urxvt*buffered: true
+
+Xft.dpi: 96
+Xft.antialias: true
+Xft.rgba: rgb
+Xft.autohint: false
+Xft.hinting: true
+Xft.hintstyle: hintslight
+Xft.lcdfilter: lcddefault
+
+!urxvt*font: xft:Bitstream Vera Sans Mono:pixelsize=11
+urxvt*font: xft:tamsyn:pixelsize=12
+!urxvt*font: xft:bitbuntufull:pixelsize=11
+!urxvt*font: xft:Ubuntu Mono:pixelsize=12
+URxvt*perl-lib: /usr/lib/urxvt/perl
+URxvt*perl-ext-common: default,matcher,selection,mark-yank-urls
+urxvt*urlLauncher: firefox
+urxvt*keysym.M-u: perl:mark-yank-urls:active_mark_mode
+urxvt.underlineURLs: true
+urxvt*matcher.button: 1
+URxvt*matcher.pattern.1: \\bwww\\.[\\w-]\\.[\\w./?&@#-]*[\\w/-]
+URxvt*matcher.rend.0: fg6
+
+Xcursor.theme: Vanilla-DMZ-AA
+Xcursor.size: 16

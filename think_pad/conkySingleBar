@@ -1,0 +1,44 @@
+##############################################
+#  Settings
+##############################################
+background no
+out_to_x no
+out_to_console yes
+update_interval 1.0
+total_run_times 0
+uppercase no
+short_units yes
+use_spacer none
+if_up_strictness address
+##############################################
+#  Output
+##############################################
+TEXT
+^s[14;14;\#999999;|]\
+^s[25;14;\#C7C7C7;CPU:]\
+^g[52;4;85;12;${cpu};100;\#1874cd;\#63b8ff;conkycpu](1;spawn;urxvtc -e htop)\
+${if_match "${cpu}" >= "80" }^s[142;14;\#0033ff;${cpu} %]${else}^s[142;14;\#0033ff;${cpu}%]${endif}\
+\
+^s[150;14;\#C7C7C7; ${top cpu 1}% ${top name 1}]\
+\
+^s[294;14;\#999999;|]\
+^s[305;14;\#C7C7C7;MEM:]\
+${if_match "${memperc}" >= "80" }^s[423;14;\#0033ff;${memperc} %]${else}^s[423;14;\#0033ff;${memperc}%]${endif}\
+^p[332;4;85;12;0;${memperc};100;\#1874cd;\#63b8ff](1;spawn;urxvtc -e htop)\
+^s[337;14;\#050505;${mem} ]^s[372;14;\#050505;/ ${memmax}]\
+\
+^s[431;14;\#C7C7C7; ${top_mem mem 1}% ${top_mem name 1}]\
+\
+^s[575;14;\#999999;|]\
+^s[586;14;\#C7C7C7;HDD:]\
+^s[703;14;\#0033ff;${fs_used_perc /} %]\
+^p[613;4;85;12;0;${fs_used_perc};100;\#1874cd;\#63b8ff](1;spawn;urxvtc -e ncdu)\
+^s[618;14;\#050505;${fs_used /}]^s[653;14;\#050505;/ ${fs_size /}]\
+\
+^s[736;14;\#C7C7C7; E:  ${if_mounted /media/lorcan/6F5D673342FB610F}${fs_used_perc /media/lorcan/6F5D673342FB610F}% used${else}not mounted${endif}]\
+\
+^s[880;14;\#999999;|]\
+^s[891;14;\#C7C7C7;NET:]\
+^s[919;14;\#0033ff;${if_up enp10s0}enp10s0${else}${if_up wlan0}wlan0${else}no connection${endif}${endif}]\
+^s[980;14;\#63b8ff;UP: ${upspeed enp10s0}/s]^s[1056;14;\#1874cd;DOWN: ${downspeed enp10s0}/s]\
+

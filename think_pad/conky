@@ -1,0 +1,28 @@
+##############################################
+#  Settings
+##############################################
+background no
+out_to_x no
+out_to_console yes
+update_interval 1.0
+total_run_times 0
+uppercase no
+short_units yes
+use_spacer none
+if_up_strictness address
+##############################################
+#  Output
+##############################################
+TEXT
+^s[right;\#999999;| ]\
+^s[right;\#00ccff;TIME :  ]\
+^s[right;\#0033ff;${time  %l:%M %P    }](1;spawn;dzen_cal.sh)\
+^s[right;\#999999;| ]\
+^s[right;\#0033ff;DATE :  ]\
+^s[right;\#00ccff;${time    %d / %h / %y    }]\
+^s[right;\#999999;| ]\
+^s[right;\#0033ff;BAT:]\
+${if_match ${battery_percent BAT0} > 25 }^p[right;50;12;1;${battery_percent BAT0};100;\#0033ff;\#00ccff;ckybat] ${else}^p[right;50;12;1;${battery_percent BAT0};100;\#0033ff;\#FF0000;ckybat]${endif}\
+^s[right;\#00ccff; ${battery_short BAT0} ]\
+^s[right;\#999999;    | ]\
+
